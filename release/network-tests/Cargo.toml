@@ -1,0 +1,10 @@
+[package]
+name = "luma-network-contract-tests"
+version = "0.1.0"
+edition = "2024"
+
+[workspace]
+
+[dependencies]
+horizon-protocol = { path = "../crates/horizon-protocol" }
+sha2 = "0.10.9"

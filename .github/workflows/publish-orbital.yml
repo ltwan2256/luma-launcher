@@ -1,0 +1,22 @@
+name: Publish accepted Orbital package
+on:
+  push:
+    paths: ['publication/orbital-0.5.3-luma.1.json']
+permissions:
+  contents: write
+concurrency:
+  group: publish-orbital-luma-1
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: windows-2022
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Verify acceptance receipt, publish release and update catalog
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: ./publication/Publish-Orbital.ps1

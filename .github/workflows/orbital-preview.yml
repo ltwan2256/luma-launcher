@@ -9,7 +9,7 @@ permissions:
   contents: read
 concurrency:
   group: orbital-preview
-  cancel-in-progress: false
+  cancel-in-progress: true
 jobs:
   windows:
     runs-on: windows-2022
@@ -48,5 +48,13 @@ jobs:
         run: |
           $tag = 'orbital-0.5.3-luma.1'
           $assets = @('release-assets/luma-orbital-0.5.3-windows-luma.1.zip', 'release-assets/orbital.json', 'release-assets/SHA256SUMS.txt')
-          gh release create $tag @assets --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --draft --prerelease --title 'Orbital 0.5.3 for LUMA — multiplayer bridge' --notes-file release/NETWORK-NOTES.md
+          $existing = gh release view $tag --repo $env:GITHUB_REPOSITORY --json isDraft 2>$null
+          if ($LASTEXITCODE -eq 0) {
+            if (!(($existing | ConvertFrom-Json).isDraft)) { throw 'A public package is immutable; choose a new release tag.' }
+            gh release edit $tag --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --notes-file release/NETWORK-NOTES.md
+            if ($LASTEXITCODE -ne 0) { throw 'Updating the draft target failed' }
+            gh release upload $tag @assets --repo $env:GITHUB_REPOSITORY --clobber
+          } else {
+            gh release create $tag @assets --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --draft --prerelease --title 'Orbital 0.5.3 for LUMA — multiplayer bridge' --notes-file release/NETWORK-NOTES.md
+          }
           if ($LASTEXITCODE -ne 0) { throw 'Creating the draft release failed' }

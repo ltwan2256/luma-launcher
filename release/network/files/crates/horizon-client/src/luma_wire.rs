@@ -45,7 +45,7 @@ impl Message{
             Self::EditRuns{runs,..}=>checked(!runs.is_empty()&&runs.len()<=CHUNK_RUNS&&runs.iter().all(|r|coordinate(r.x)&&coordinate(r.z)&&(-4096..=4096).contains(&r.y)&&r.height<=4096&&r.surface.is_none_or(|v|v<4)&&r.block<4096&&r.only.is_none_or(|v|v<4096)))?,
             Self::Surface{kind,columns,..}=>checked(*kind<4&&columns.len()<=65536&&columns.iter().all(|&(x,z)|coordinate(x)&&coordinate(z)))?,
             Self::Heights{heights,..}=>checked(heights.len()<=65536&&heights.iter().all(|v|v.is_none_or(|y|(-4096..=4096).contains(&y))))?,
-            Self::Sound{event,at,volume,pitch}=>checked(event.starts_with("orbital:")&&event.len()<=128&&event.bytes().all(|c|c.is_ascii_alphanumeric()||b":_./-".contains(&c))&&at.is_none_or(|v|v.iter().all(|f|f.is_finite()&&f.abs()<=30_000_000.))&&volume.is_finite()&&(0.0..=64.).contains(volume)&&pitch.is_finite()&&(0.01..=4.).contains(pitch))?,
+            Self::Sound{event,at,volume,pitch}=>checked(event.starts_with("orbital:")&&event.len()<=128&&event.bytes().all(|c|c.is_ascii_alphanumeric()||b":_./-".contains(&c))&&at.is_none_or(|v|v.iter().all(|f|f.is_finite()&&f.abs()<=30_000_000.))&&volume.is_finite()&&(0.0..=64.).contains(volume)&&pitch.is_finite()&&(0.0..=4.).contains(pitch))?,
             Self::Shake{strength,seconds}=>checked(strength.is_finite()&&(0.0..=1.).contains(strength)&&seconds.is_finite()&&(0.0..=120.).contains(seconds))?,
             Self::Notice{text,..}=>checked(text.len()<=1024)?,
             Self::Clear|Self::EditEnd(_)|Self::Resync=>{},

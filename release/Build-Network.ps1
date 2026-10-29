@@ -10,9 +10,11 @@ $buildRoot=Join-Path $env:RUNNER_TEMP 'luma-orbital-build'
 & (Join-Path $PSScriptRoot 'Apply-Network.ps1') -SourceRoot $source
 $env:CARGO_BUILD_JOBS='2'
 $env:CARGO_TARGET_DIR=Join-Path $buildRoot 'target'
+$contracts=Join-Path $source 'luma-contract-tests'
+Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'network-tests') -Destination $contracts -Recurse
 Push-Location -LiteralPath $source
 try {
-    & cargo test --locked --release -p horizon-client --lib luma_
+    & cargo test --locked --manifest-path (Join-Path $contracts 'Cargo.toml')
     if($LASTEXITCODE -ne 0){throw ('Network contract tests failed: '+$LASTEXITCODE)}
     & cargo build --locked --release -p horizon-client --bin horizon-client --features mods --target x86_64-pc-windows-msvc
     if($LASTEXITCODE -ne 0){throw ('Cargo failed: '+$LASTEXITCODE)}

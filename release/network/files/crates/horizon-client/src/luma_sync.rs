@@ -30,7 +30,7 @@ impl Post{
 }
 pub struct Active{pub owner:u32,pub dimension:String,pub post:Post,last:Instant,known:HashMap<u32,(u64,u64)>}
 struct Pending{owner:u32,transaction:u32,total:usize,palette:Vec<String>,filters:Vec<String>,runs:Vec<Run>,last:Instant}
-struct Budget{start:Instant,bytes:usize,packets:usize}
+struct Budget{last:Instant,bytes:f64,packets:f64}
 #[derive(Default)]
 pub struct Server{pub active:Option<Active>,pending:Option<Pending>,budgets:HashMap<u32,Budget>}
 pub enum Action{
@@ -39,10 +39,15 @@ pub enum Action{
 fn notice(code:u8,text:&str)->Action{Action::Reply(Message::Notice{code,text:text.into()})}
 impl Server{
     pub fn budget(&mut self,conn:u32,bytes:usize)->Result<(),String>{
-        let b=self.budgets.entry(conn).or_insert_with(||Budget{start:Instant::now(),bytes:0,packets:0});
-        if b.start.elapsed()>=Duration::from_secs(1){b.start=Instant::now();b.bytes=0;b.packets=0;}
-        b.bytes+=bytes;b.packets+=1;
-        if b.bytes>32*1024*1024||b.packets>512{Err("LUMA: Orbital network rate exceeded".into())}else{Ok(())}
+        // Surface callbacks and edit transactions arrive in bursts after a slow
+        // render frame. A two-second token bucket absorbs that backlog while
+        // keeping both sustained traffic and queued memory bounded.
+        let b=self.budgets.entry(conn).or_insert_with(||Budget{last:Instant::now(),bytes:64.*1024.*1024.,packets:8192.});
+        let elapsed=b.last.elapsed().as_secs_f64().min(2.);b.last=Instant::now();
+        b.bytes=(b.bytes+elapsed*32.*1024.*1024.).min(64.*1024.*1024.);
+        b.packets=(b.packets+elapsed*4096.).min(8192.);
+        if b.bytes<bytes as f64||b.packets<1.{return Err("LUMA: Orbital network rate exceeded".into());}
+        b.bytes-=bytes as f64;b.packets-=1.;Ok(())
     }
     pub fn receive(&mut self,conn:u32,dimension:&str,permission:u8,profile:&Profile,message:Message)->Result<Action,String>{
         message.validate()?;
@@ -113,6 +118,11 @@ impl Server{
     use super::*;
     fn profile()->Profile{use sha2::{Digest,Sha256};Profile{fingerprint:"orbital@test".into(),shader_hashes:Arc::from([format!("{:x}",Sha256::digest(b"approved shader"))])}}
     fn post()->Message{Message::Post{version:1,source:Some(Arc::from("approved shader")),params:[0.;16],data_version:1,data:Some(Arc::from([1,2,3]))}}
+    #[test]fn burst_budget_allows_surface_callbacks_but_rejects_unbounded_traffic(){
+        let mut server=Server::default();
+        for _ in 0..4096{assert!(server.budget(1,128).is_ok());}
+        assert!(server.budget(1,128*1024*1024).is_err());
+    }
     #[test]fn shared_effects_require_permission_and_one_owner_and_resync_late_joiners(){
         let mut server=Server::default();let p=profile();
         assert!(matches!(server.receive(1,"overworld",0,&p,post()).unwrap(),Action::Reply(_)));assert!(server.active.is_none());
