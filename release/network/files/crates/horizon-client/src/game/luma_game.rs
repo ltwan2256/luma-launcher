@@ -2,7 +2,14 @@
 use super::{Game,Dim,lan::LanHost};
 use horizon_client::{luma_net,luma_sync::{self,Action},luma_wire::{self,Message}};
 use horizon_protocol::packets::{configuration::CustomPayload,play::{self,Clientbound as C,Serverbound as S}};
-use std::{collections::HashMap,time::{Duration,Instant}};
+use std::{collections::HashMap,time::{Duration,Instant},sync::atomic::{AtomicU64,Ordering}};
+
+// Component versions belong to each player's sandbox. Give received passes a
+// process-wide renderer key so two players' version 1 cannot reuse stale GPU data.
+fn render_revision()->u64{
+    static NEXT:AtomicU64=AtomicU64::new(1u64<<63);
+    NEXT.fetch_add(1,Ordering::Relaxed)
+}
 
 #[derive(Default)]
 pub(super) struct Client{
@@ -11,6 +18,7 @@ pub(super) struct Client{
     serial:u32,pending:HashMap<u32,(u32,usize)>,
     received_posts:u64,received_sounds:u64,sent_edits:u64,
     resync_pending:bool,
+    render_source:u64,render_data:u64,
 }
 fn heightmap(kind:u8)->horizon_mods::Heightmap{
     use horizon_mods::Heightmap::*;match kind{1=>MotionBlocking,2=>MotionBlockingNoLeaves,3=>OceanFloor,_=>WorldSurface}
@@ -56,7 +64,7 @@ impl Game<'_>{
         if !self.mods.network.denied{self.luma_send(Message::Shake{strength,seconds});}true
     }
     pub(super) fn luma_post_pass(&self)->Option<super::ModPostPass>{
-        self.mods.network.post.as_ref().map(|p|(p.source.clone(),p.version,p.params,p.data.clone()))
+        self.mods.network.post.as_ref().map(|p|(p.source.clone(),self.mods.network.render_source,p.params,p.data.as_ref().map(|(data,_)|(data.clone(),self.mods.network.render_data))))
     }
     fn luma_message(&mut self,text:&str){
         self.system_message(horizon_client::text::Text::literal(text));
@@ -79,7 +87,14 @@ impl Game<'_>{
         match Message::decode(bytes)?{
             msg@Message::Post{..}=>{
                 match luma_sync::Post::apply(self.mods.network.post.as_ref(),&msg,profile){
-                    Ok(post)=>{self.mods.network.resync_pending=false;self.mods.network.received_posts+=1;self.mods.network.post=Some(post);},
+                    Ok(post)=>{
+                        let previous=self.mods.network.post.as_ref();
+                        let source_changed=previous.is_none_or(|old|old.source!=post.source);
+                        let data_changed=previous.is_none_or(|old|old.data.as_ref().map(|(_,v)|v)!=post.data.as_ref().map(|(_,v)|v));
+                        if source_changed{self.mods.network.render_source=render_revision();}
+                        if data_changed{self.mods.network.render_data=render_revision();}
+                        self.mods.network.resync_pending=false;self.mods.network.received_posts+=1;self.mods.network.post=Some(post);
+                    },
                     Err(e) if e.contains("resynchronized")=>{self.mods.network.post=None;if !self.mods.network.resync_pending{self.mods.network.resync_pending=true;self.luma_send(Message::Resync);}},
                     Err(e)=>return Err(e),
                 }

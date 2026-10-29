@@ -13,7 +13,7 @@ index 73fa36e..2604c8b 100644
  pub mod ambience;
  pub mod animate_tick;
 diff --git a/crates/horizon-client/src/net.rs b/crates/horizon-client/src/net.rs
-index 9cce9e1..c02a236 100644
+index 9cce9e1..fc5ae7b 100644
 --- a/crates/horizon-client/src/net.rs
 +++ b/crates/horizon-client/src/net.rs
 @@ -20,7 +20,7 @@ use horizon_protocol::{
@@ -147,6 +147,14 @@ index 9cce9e1..c02a236 100644
                  let mut w = writer.lock().unwrap();
                  let w = w.as_mut().ok_or("Disconnected")?;
                  w.send(&cfg::Serverbound::FinishConfiguration(Empty).encode())
+@@ -701,6 +768,7 @@ mod tests {
+         let (mut reader, writer) = Connection::local(client).split();
+         let (send, events) = channel();
+         let session = Session {
++            luma_writer: None,
+             events,
+             writer: Arc::new(Mutex::new(Some(writer))),
+             configuring: Arc::new(AtomicBool::new(false)),
 diff --git a/crates/horizon-client/src/lan/conn.rs b/crates/horizon-client/src/lan/conn.rs
 index fb91f30..94997e5 100644
 --- a/crates/horizon-client/src/lan/conn.rs
