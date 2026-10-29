@@ -1,4 +1,4 @@
-name: Build Orbital Windows preview
+name: Build Orbital LUMA multiplayer package
 on:
   workflow_dispatch:
   push:
@@ -38,15 +38,15 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw 'Rust installation failed' }
           rustup default stable
           if ($LASTEXITCODE -ne 0) { throw 'Rust setup failed' }
-      - name: Compile and package the preview
+      - name: Test, compile and package the multiplayer bridge
         shell: pwsh
-        run: ./release/Build-Preview.ps1 -SourceRoot ./upstream-horizon -Repository $env:GITHUB_REPOSITORY
+        run: ./release/Build-Network.ps1 -SourceRoot ./upstream-horizon -Repository $env:GITHUB_REPOSITORY
       - name: Create a draft release for review
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $tag = 'orbital-0.5.3-preview.' + $env:GITHUB_RUN_NUMBER
-          $assets = @('release-assets/luma-orbital-0.5.3-windows-preview.zip', 'release-assets/orbital.preview.json', 'release-assets/SHA256SUMS.txt')
-          gh release create $tag @assets --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --draft --prerelease --title 'Orbital 0.5.3 Windows — technical preview' --notes-file release/PREVIEW-NOTES.md
+          $tag = 'orbital-0.5.3-luma.1'
+          $assets = @('release-assets/luma-orbital-0.5.3-windows-luma.1.zip', 'release-assets/orbital.json', 'release-assets/SHA256SUMS.txt')
+          gh release create $tag @assets --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --draft --prerelease --title 'Orbital 0.5.3 for LUMA — multiplayer bridge' --notes-file release/NETWORK-NOTES.md
           if ($LASTEXITCODE -ne 0) { throw 'Creating the draft release failed' }

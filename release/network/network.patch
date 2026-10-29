@@ -1,0 +1,397 @@
+diff --git a/crates/horizon-client/src/lib.rs b/crates/horizon-client/src/lib.rs
+index 73fa36e..2604c8b 100644
+--- a/crates/horizon-client/src/lib.rs
++++ b/crates/horizon-client/src/lib.rs
+@@ -1,6 +1,9 @@
+ //! Horizon native client: resources, world streaming, rendering and the
+ //! bindings between the validated simulation pieces and the game loop.
+ #![forbid(unsafe_code)]
++pub mod luma_net;
++pub mod luma_wire;
++pub mod luma_sync;
+ pub mod advancements;
+ pub mod ambience;
+ pub mod animate_tick;
+diff --git a/crates/horizon-client/src/net.rs b/crates/horizon-client/src/net.rs
+index 9cce9e1..c02a236 100644
+--- a/crates/horizon-client/src/net.rs
++++ b/crates/horizon-client/src/net.rs
+@@ -20,7 +20,7 @@ use horizon_protocol::{
+ use std::{
+     sync::{
+         Arc, Mutex,
+-        atomic::{AtomicBool, Ordering},
++        atomic::{AtomicBool, AtomicUsize, Ordering},
+         mpsc::{Receiver, Sender, channel},
+     },
+     thread::JoinHandle,
+@@ -57,7 +57,46 @@ pub enum Event {
+     },
+ }
+ 
++struct LumaWriter {
++    sender: Sender<Vec<u8>>,
++    pending: Arc<AtomicUsize>,
++}
++impl LumaWriter {
++    fn new(writer: Arc<Mutex<Option<ConnWriter>>>, configuring: Arc<AtomicBool>) -> Option<Self> {
++        let (sender, receive) = channel::<Vec<u8>>();
++        let pending = Arc::new(AtomicUsize::new(0));
++        let count = pending.clone();
++        std::thread::Builder::new().name("luma-orbital-send".into()).spawn(move || {
++            for packet in receive {
++                let n = packet.len();
++                let failed = {
++                    let mut guard = writer.lock().unwrap();
++                    if configuring.load(Ordering::Relaxed) { false }
++                    else if let Some(w) = guard.as_mut() {
++                        if w.send(&packet).is_err() { w.shutdown(); true } else { false }
++                    } else { true }
++                };
++                count.fetch_sub(n, Ordering::Relaxed);
++                if failed { break; }
++            }
++        }).ok()?;
++        Some(Self { sender, pending })
++    }
++    fn enqueue(&self, packet: Vec<u8>) -> bool {
++        let n = packet.len();
++        if self.pending.fetch_add(n, Ordering::Relaxed) + n > 32 * 1024 * 1024 {
++            self.pending.fetch_sub(n, Ordering::Relaxed);
++            return false;
++        }
++        if self.sender.send(packet).is_err() {
++            self.pending.fetch_sub(n, Ordering::Relaxed);
++            return false;
++        }
++        true
++    }
++}
+ pub struct Session {
++    luma_writer: Option<LumaWriter>,
+     events: Receiver<Event>,
+     writer: Arc<Mutex<Option<ConnWriter>>>,
+     /// The connection is in configuration (else in play). Changed only
+@@ -132,7 +171,9 @@ impl Session {
+             })
+             .ok();
+         let debug = std::env::var_os("HORIZON_NET_DEBUG").is_some();
++        let luma_writer = crate::luma_net::current().ok().filter(|p|p.enabled()).and_then(|_|LumaWriter::new(writer.clone(),configuring.clone()));
+         Self {
++            luma_writer,
+             events,
+             writer,
+             configuring,
+@@ -153,6 +194,15 @@ impl Session {
+     /// the level before it acknowledges, so no play packet follows the
+     /// acknowledgement; one that did would reach the server as a
+     /// configuration packet, and Velocity drops such a client.
++    /// Large mod messages leave on a bounded queue, not on the render thread.
++    pub fn send_luma(&self, data: Vec<u8>) -> bool {
++        let Some(out) = &self.luma_writer else { return false; };
++        if self.configuring.load(Ordering::Relaxed) { return false; }
++        let packet = play::Serverbound::CustomPayload(cfg::CustomPayload {
++            channel: crate::luma_net::PLAY.into(), data,
++        }).encode();
++        out.enqueue(packet)
++    }
+     pub fn send(&self, packet: play::Serverbound) {
+         if self.debug
+             && !matches!(
+@@ -164,6 +214,12 @@ impl Session {
+         {
+             eprintln!("[net] -> {packet:?}");
+         }
++        if let Some(out) = &self.luma_writer {
++            if !self.configuring.load(Ordering::Relaxed) {
++                out.enqueue(packet.encode());
++            }
++            return;
++        }
+         let mut writer = self.writer.lock().unwrap();
+         if self.configuring.load(Ordering::Relaxed) {
+             return;
+@@ -494,6 +550,8 @@ fn configure(
+     lang: &Language,
+     send: &Sender<Event>,
+ ) -> Result<Dynamic, String> {
++    let luma_profile = crate::luma_net::current().map_err(str::to_owned)?;
++    let mut luma_seen = false;
+     let mut registries = Dynamic::default();
+     let reply = |p: cfg::Serverbound| -> Result<(), String> {
+         match writer.lock().unwrap().as_mut() {
+@@ -501,10 +559,18 @@ fn configure(
+             None => Err("Disconnected".into()),
+         }
+     };
++    reply(cfg::Serverbound::CustomPayload(cfg::CustomPayload {
++        channel: crate::luma_net::HELLO.into(), data: luma_profile.hello(),
++    }))?;
+     loop {
+         let (id, payload) = reader.recv().map_err(|e| e.to_string())?;
+         match cfg::Clientbound::decode(id, &payload).map_err(|e| e.to_string())? {
+             cfg::Clientbound::KeepAlive(k) => reply(cfg::Serverbound::KeepAlive(k))?,
++            cfg::Clientbound::CustomPayload(p) if p.channel == crate::luma_net::HELLO => {
++                if luma_seen { return Err("LUMA: duplicate mod handshake".into()); }
++                crate::luma_net::compare(luma_profile, &p.data)?;
++                luma_seen = true;
++            }
+             cfg::Clientbound::CustomPayload(p) => receive_brand(&p, send),
+             cfg::Clientbound::Ping(p) => reply(cfg::Serverbound::Pong(p))?,
+             // Know no packs: the server then sends every registry entry in full.
+@@ -532,6 +598,7 @@ fn configure(
+             }
+             cfg::Clientbound::Disconnect(d) => return Err(plain(&d.reason, lang)),
+             cfg::Clientbound::FinishConfiguration(_) => {
++                crate::luma_net::require_peer(luma_profile, luma_seen)?;
+                 let mut w = writer.lock().unwrap();
+                 let w = w.as_mut().ok_or("Disconnected")?;
+                 w.send(&cfg::Serverbound::FinishConfiguration(Empty).encode())
+diff --git a/crates/horizon-client/src/lan/conn.rs b/crates/horizon-client/src/lan/conn.rs
+index fb91f30..94997e5 100644
+--- a/crates/horizon-client/src/lan/conn.rs
++++ b/crates/horizon-client/src/lan/conn.rs
+@@ -777,6 +777,8 @@ fn login_and_configure(
+         }
+     }
+     // Configuration.
++    let luma_profile = crate::luma_net::current().map_err(str::to_owned)?;
++    let mut luma_seen = false;
+     let sync: &SyncData = &shared.sync;
+     let send = |c: &mut Connection, p: cfg::Clientbound| c.send(&p.encode()).map_err(e);
+     send(
+@@ -808,12 +810,24 @@ fn login_and_configure(
+             packs: vec![core.clone()],
+         }),
+     )?;
++    send(c, cfg::Clientbound::CustomPayload(cfg::CustomPayload {
++        channel: crate::luma_net::HELLO.into(), data: luma_profile.hello(),
++    }))?;
+     let mut info = ClientInformation::new(10);
+     let mut brand = String::from("vanilla");
+     let known_pack = loop {
+         let (id, payload) = c.recv().map_err(e)?;
+         match cfg::Serverbound::decode(id, &payload).map_err(e)? {
+             cfg::Serverbound::ClientInformation(i) => info = i,
++            cfg::Serverbound::CustomPayload(p) if p.channel == crate::luma_net::HELLO => {
++                let result = if luma_seen { Err("LUMA: duplicate mod handshake".into()) }
++                    else { crate::luma_net::compare(luma_profile, &p.data) };
++                if let Err(message) = result {
++                    send(c, cfg::Clientbound::Disconnect(cfg::Disconnect { reason: horizon_protocol::text::literal(&message) }))?;
++                    return Ok(None);
++                }
++                luma_seen = true;
++            }
+             cfg::Serverbound::CustomPayload(p) if p.channel == "minecraft:brand" => {
+                 brand = horizon_protocol::buf::Reader::new(&p.data)
+                     .string(32767)
+@@ -835,6 +849,10 @@ fn login_and_configure(
+         lost(shared, &format!("{name} ({})", uuid_string(uuid)), &text);
+         return Ok(None);
+     }
++    if let Err(message) = crate::luma_net::require_peer(luma_profile, luma_seen) {
++        send(c, cfg::Clientbound::Disconnect(cfg::Disconnect { reason: horizon_protocol::text::literal(&message) }))?;
++        return Ok(None);
++    }
+     send(c, cfg::Clientbound::FinishConfiguration(Empty))?;
+     loop {
+         let (id, payload) = c.recv().map_err(e)?;
+diff --git a/crates/horizon-client/src/lan/hub.rs b/crates/horizon-client/src/lan/hub.rs
+index bed5e4e..ace5cf3 100644
+--- a/crates/horizon-client/src/lan/hub.rs
++++ b/crates/horizon-client/src/lan/hub.rs
+@@ -135,6 +135,7 @@ pub enum HostEvent {
+ }
+ 
+ pub struct Hub {
++    pub luma: crate::luma_sync::Server,
+     pub lan: Lan,
+     pub config: HubConfig,
+     pub encoder: ChunkEncoder,
+@@ -292,6 +293,7 @@ impl Hub {
+         let d = horizon_protocol::registry::DimensionType::vanilla(&config.dimension);
+         encoder.set_dimension(d.min_y, d.height, d.has_skylight);
+         Self {
++            luma: Default::default(),
+             lan,
+             config,
+             encoder,
+diff --git a/crates/horizon-client/src/game.rs b/crates/horizon-client/src/game.rs
+index 2e0fb2d..afcd9b3 100644
+--- a/crates/horizon-client/src/game.rs
++++ b/crates/horizon-client/src/game.rs
+@@ -99,6 +99,8 @@ mod mob_blocks;
+ mod mob_gear;
+ mod mods;
+ mod luma_skins;
++#[cfg(feature = "mods")]
++mod luma_game;
+ mod mount_menu;
+ mod mounts;
+ mod moving_pistons;
+diff --git a/crates/horizon-client/src/game/mods.rs b/crates/horizon-client/src/game/mods.rs
+index 25a35c6..8cffc51 100644
+--- a/crates/horizon-client/src/game/mods.rs
++++ b/crates/horizon-client/src/game/mods.rs
+@@ -36,7 +36,9 @@ use {
+ #[derive(Default)]
+ pub(super) struct ModsState {
+     #[cfg(feature = "mods")]
+-    mods: Mods,
++    pub(super) network: super::luma_game::Client,
++    #[cfg(feature = "mods")]
++    pub(super) mods: Mods,
+     /// `--dev-mod PATH`: always on, reloaded when rebuilt.
+     pub(super) dev: Vec<PathBuf>,
+     /// When dev mods were last checked for a rebuild.
+@@ -209,6 +211,7 @@ impl Game<'_> {
+     /// A running mod's post pass (capability `render`): its source, the source's version, its parameters and its
+     /// data (with the data's version).
+     pub(super) fn mod_post_pass(&self) -> Option<super::ModPostPass> {
++        if self.luma_render_override() { return self.luma_post_pass(); }
+         self.mods
+             .mods
+             .post()
+@@ -515,6 +518,7 @@ impl Game<'_> {
+     /// Chat lines, command feedback and stopped mods, into the chat; the
+     /// screens, commands and sounds mods asked for.
+     fn show_mod_output(&mut self) {
++        self.luma_sync_post();
+         for output in self.mods.mods.drain() {
+             let line = match output {
+                 Output::Screen { id, open: true } => {
+@@ -558,10 +562,12 @@ impl Game<'_> {
+                     volume,
+                     pitch,
+                 } => {
++                    if self.luma_sound(&event, at, volume, pitch) { continue; }
+                     self.audio.play(&event, at, volume, pitch);
+                     continue;
+                 }
+                 Output::Shake { strength, seconds } => {
++                    if self.luma_shake(strength, seconds) { continue; }
+                     let now = self.ticks as f64 / 20.0;
+                     self.camera_shake.add(now, strength, seconds);
+                     continue;
+@@ -841,6 +847,7 @@ impl Game<'_> {
+ 
+     /// `world.run-commands`: at operator level, silently, in order.
+     fn run_mod_commands(&mut self, id: &str, commands: Vec<String>) {
++        if id == "orbital" && self.luma_enabled() { self.luma_commands(commands); return; }
+         // Single player's world is its server thread's: they run there, as the world's owner, in order, while the
+         // window goes on drawing (waiting for them would hold up the frame for as long as the server works).
+         if let Some(server) = &self.integrated {
+@@ -855,6 +862,7 @@ impl Game<'_> {
+     }
+     /// `world.edit-blocks`: made where the commands run, in order with them.
+     fn run_mod_edit(&mut self, id: &str, edit: horizon_mods::BlockEdit) {
++        if id == "orbital" && self.luma_enabled() { self.luma_edit(edit); return; }
+         if let Some(server) = &self.integrated {
+             let id = id.to_owned();
+             server.execute(move |g| g.owner_edit_blocks(&id, &edit));
+@@ -875,6 +883,7 @@ impl Game<'_> {
+         columns: Vec<(i32, i32)>,
+         heightmap: horizon_mods::Heightmap,
+     ) {
++        if id == "orbital" && self.luma_enabled() { self.luma_surface(tag, columns, heightmap); return; }
+         let answers = self.mods.surface.clone();
+         let answer = move |heights: Vec<Option<i32>>| {
+             if let Ok(mut a) = answers.lock() {
+diff --git a/crates/horizon-client/src/game/remote.rs b/crates/horizon-client/src/game/remote.rs
+index 4b8f3cd..3c11eec 100644
+--- a/crates/horizon-client/src/game/remote.rs
++++ b/crates/horizon-client/src/game/remote.rs
+@@ -1678,6 +1678,10 @@ impl Game<'_> {
+ 
+     fn handle_packet(&mut self, packet: C) -> Result<()> {
+         match packet {
++            #[cfg(feature = "mods")]
++            C::CustomPayload(p) if p.channel == horizon_client::luma_net::PLAY => {
++                self.luma_receive(&p.data)?;
++            }
+             // ClientCommonPacketListenerImpl.handlePing runs on the game
+             // thread, after all preceding packets (especially teleports).
+             C::Ping(p) => self.send(S::Pong(p)),
+@@ -1687,6 +1691,8 @@ impl Game<'_> {
+                 self.debug_charts.ping.log(delay);
+             }
+             C::Login(p) => {
++                #[cfg(feature = "mods")]
++                self.luma_reset();
+                 self.level.hardcore = p.hardcore;
+                 if let Some(r) = self.remote.as_mut() {
+                     r.online_mode = p.online_mode;
+@@ -1705,6 +1711,8 @@ impl Game<'_> {
+                 ));
+             }
+             C::Respawn(p) => {
++                #[cfg(feature = "mods")]
++                self.luma_reset();
+                 // A new player, without effects: the server sends them again.
+                 self.potions.effects.clear();
+                 self.enter_remote_dimension(&p.spawn, true);
+diff --git a/crates/horizon-client/src/game/lan.rs b/crates/horizon-client/src/game/lan.rs
+index 8460f54..017f077 100644
+--- a/crates/horizon-client/src/game/lan.rs
++++ b/crates/horizon-client/src/game/lan.rs
+@@ -1002,6 +1002,8 @@ impl Game<'_> {
+             }
+             host.states = states;
+         }
++        #[cfg(feature = "mods")]
++        self.luma_housekeeping(&mut host);
+         self.lan_flush_effects(&mut host);
+         if !paused {
+             self.tick_guests(&mut host);
+diff --git a/crates/horizon-client/src/game/lan_actions.rs b/crates/horizon-client/src/game/lan_actions.rs
+index 2c7019c..359e535 100644
+--- a/crates/horizon-client/src/game/lan_actions.rs
++++ b/crates/horizon-client/src/game/lan_actions.rs
+@@ -817,6 +817,15 @@ impl Game<'_> {
+         let Some(gi) = host.hub.guests.iter().position(|g| g.conn == conn) else {
+             return;
+         };
++        #[cfg(feature = "mods")]
++        if let S::CustomPayload(p) = &packet
++            && p.channel == horizon_client::luma_net::PLAY
++        {
++            if let Err(message) = self.luma_host_payload(host, conn, &p.data) {
++                host.hub.kick(conn, literal(&message));
++            }
++            return;
++        }
+         // A dead player acts no more, but the death screen still respawns and chats: its
+         // commands run as anyone's (ServerGamePacketListenerImpl.handleChatCommand doesn't
+         // look at the player's health).
+diff --git a/crates/horizon-client/src/game/control.rs b/crates/horizon-client/src/game/control.rs
+index ff22daa..c23a883 100644
+--- a/crates/horizon-client/src/game/control.rs
++++ b/crates/horizon-client/src/game/control.rs
+@@ -152,6 +152,8 @@ impl Game<'_> {
+         event_loop: &ActiveEventLoop,
+     ) -> Result<Option<Value>> {
+         let words: Vec<&str> = line.split_whitespace().collect();
++        #[cfg(feature = "mods")]
++        if words.first() == Some(&"luma-status") { return Ok(Some(self.luma_status())); }
+         if self.pending_save.is_some() && words.first() != Some(&"quit") {
+             return Err("a world save is in progress".into());
+         }
+diff --git a/crates/horizon-mods/src/runtime.rs b/crates/horizon-mods/src/runtime.rs
+index 8fa05f7..6aa2f9a 100644
+--- a/crates/horizon-mods/src/runtime.rs
++++ b/crates/horizon-mods/src/runtime.rs
+@@ -614,6 +614,14 @@ impl Mods {
+     }
+     /// The first running mod's post-processing pass, when it has a source
+     /// and parameters.
++    /// The pass emitted by one particular sandbox.
++    pub fn post_for(&self, id: &str) -> Option<Post> {
++        self.entries.iter().filter(|e| e.manifest.as_ref().is_some_and(|m| m.id == id)).find_map(|e| {
++            let s = e.run.as_ref()?.store.data();
++            let (source, version) = s.post_source.clone()?;
++            Some(Post { source, version, params: s.post_params?, data: s.post_data.clone() })
++        })
++    }
+     pub fn post(&self) -> Option<Post> {
+         self.entries.iter().find_map(|e| {
+             let s = e.run.as_ref()?.store.data();
