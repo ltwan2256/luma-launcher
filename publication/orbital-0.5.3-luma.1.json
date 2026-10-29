@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "accepted": true,
+  "sourceCommit": "95b845180cd29ae51137abe838dc028d51a072e2",
+  "archiveSha256": "cbdfb3bfe2970eab6cdb4454996ec06bbf08bb1bd43ca4a79693c0e08e8d3c61",
+  "twoPlayersInFrame": true,
+  "twoPlayersIntegrated": true,
+  "mismatchBothDirections": true,
+  "terrainShared": true,
+  "protocolTestsPassed": 6,
+  "localTestClientSha256": "27470086bb6ce58a07b5a26d087193265a07394af3492f5c665c1a0855205782",
+  "localBuildProfile": "fast; same network source as the CI release build",
+  "twoPhysicalVpnPcsTested": false,
+  "integratedTerrainReportSha256": "4e32c4ba1dac671eb95063967e52e37e1aa812fa5fa73e988dee91dc1a81fd34",
+  "inFrameTerrainReportSha256": "84cfcc249f55dfed769ddc4e8c835c63652716a4d72546b127d3d2c4bf695108"
+}
