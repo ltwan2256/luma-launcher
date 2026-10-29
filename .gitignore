@@ -1,0 +1,11 @@
+release-assets/
+prepared/
+target/
+.local/
+*.exe
+*.zip
+*.jar
+*.log
+**/worlds/
+**/saves/
+**/playerdata/

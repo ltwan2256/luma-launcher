@@ -1,0 +1,52 @@
+name: Build Orbital Windows preview
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'release/**'
+      - '.github/workflows/orbital-preview.yml'
+permissions:
+  contents: read
+concurrency:
+  group: orbital-preview
+  cancel-in-progress: false
+jobs:
+  windows:
+    runs-on: windows-2022
+    timeout-minutes: 120
+    permissions:
+      contents: write
+    steps:
+      - name: Check out LUMA release tools
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Check out the pinned Orbital Horizon fork
+        shell: pwsh
+        run: git config --global core.autocrlf false
+      - name: Fetch pinned Horizon sources
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          repository: Stink-O/horizon
+          ref: cbceb3f0e8dbd2eba25d3ba0c826338c93e35226
+          path: upstream-horizon
+          persist-credentials: false
+      - name: Ensure Rust is installed
+        shell: pwsh
+        run: |
+          rustup toolchain install stable --profile minimal
+          if ($LASTEXITCODE -ne 0) { throw 'Rust installation failed' }
+          rustup default stable
+          if ($LASTEXITCODE -ne 0) { throw 'Rust setup failed' }
+      - name: Compile and package the preview
+        shell: pwsh
+        run: ./release/Build-Preview.ps1 -SourceRoot ./upstream-horizon -Repository $env:GITHUB_REPOSITORY
+      - name: Create a draft release for review
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = 'orbital-0.5.3-preview.' + $env:GITHUB_RUN_NUMBER
+          $assets = @('release-assets/luma-orbital-0.5.3-windows-preview.zip', 'release-assets/orbital.preview.json', 'release-assets/SHA256SUMS.txt')
+          gh release create $tag @assets --repo $env:GITHUB_REPOSITORY --target $env:GITHUB_SHA --draft --prerelease --title 'Orbital 0.5.3 Windows — technical preview' --notes-file release/PREVIEW-NOTES.md
+          if ($LASTEXITCODE -ne 0) { throw 'Creating the draft release failed' }

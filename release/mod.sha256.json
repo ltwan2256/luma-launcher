@@ -1,0 +1,510 @@
+[
+  {
+    "Path": "horizon-mod.toml",
+    "Sha256": "2991ADC709872B2F3E258ED64664A5FC58315D8E2B6A96C059D001E21B449792"
+  },
+  {
+    "Path": "mod.wasm",
+    "Sha256": "5AD0F1BB284703F71334EDAD56C6AB58C1DE1819508D44B88CA86F070007C308"
+  },
+  {
+    "Path": "assets/orbital/sounds.json",
+    "Sha256": "CF3855DEB8F6C510CDA07F18A6A58E811ABB1B887FD2197E22AC9D218CA80D0C"
+  },
+  {
+    "Path": "assets/orbital/items/blackhole_icon.json",
+    "Sha256": "7CC82D6B12A7768684177078B13E1C5CE95AECAE471E347D543382C297190E49"
+  },
+  {
+    "Path": "assets/orbital/items/crystalbloom_icon.json",
+    "Sha256": "E433A73701FCF7D42ED37E0FA75F3BA32606810A393095C3EFB04DA1C9AB3729"
+  },
+  {
+    "Path": "assets/orbital/items/downfall_icon.json",
+    "Sha256": "21553966C3CB3E4D31D5A749CCB2CC2CBC950779C3580144FFA3D5AD783F6A29"
+  },
+  {
+    "Path": "assets/orbital/items/godly_icon.json",
+    "Sha256": "90287A28C1958C2495862B1371EF5C04B4EBC6FD51DC4A96EB217131E7A37AF4"
+  },
+  {
+    "Path": "assets/orbital/items/laser_designator.json",
+    "Sha256": "6E297D04200EB8034D69E4B3823C0C2FAA903E97DCD25000DA59081A433307F0"
+  },
+  {
+    "Path": "assets/orbital/items/meteor_icon.json",
+    "Sha256": "EE4498FF32ECFC73C8A7822B390101462E453038F1F168B9CDAC1F45AF6EDCD0"
+  },
+  {
+    "Path": "assets/orbital/items/mothership_icon.json",
+    "Sha256": "3FA272013CACC7A73CFFCE9BE723869C9708B21B6759BB81A2AC303C0B23A771"
+  },
+  {
+    "Path": "assets/orbital/items/planetkiller_icon.json",
+    "Sha256": "CEA8EFE441AF34BA8EFC2282CF23D280E8B08F1EDFF557C9A7B31CB849C7510F"
+  },
+  {
+    "Path": "assets/orbital/items/plasma_icon.json",
+    "Sha256": "72A3DA7846AC3D15445D5C5DE31EDE5CA18848913177CB8C29E7223B27BA1F69"
+  },
+  {
+    "Path": "assets/orbital/items/remote.json",
+    "Sha256": "62AFD3315F5A3ECDAB230F38AA92AD9D8B7A2273F5DA7ACE0FAEFD51F0A36C81"
+  },
+  {
+    "Path": "assets/orbital/lang/en_us.json",
+    "Sha256": "A196FD95A1FC76D29C25B60950D4140BF3AD49113ADC3A69232594D960FCBC91"
+  },
+  {
+    "Path": "assets/orbital/models/item/blackhole_icon.json",
+    "Sha256": "491401F611C6EE94C08F406ABDD6204D3D75388625C9F6A6E4FDC8472401078A"
+  },
+  {
+    "Path": "assets/orbital/models/item/crystalbloom_icon.json",
+    "Sha256": "C6BACC44DC9C692DF9946F60E39B26F7E550650478AB9A004689E1FE82735DF4"
+  },
+  {
+    "Path": "assets/orbital/models/item/downfall_icon.json",
+    "Sha256": "313F6C07492802BF0F34030C1C1FFB3B112EA615BB0BAD57AAAE0438AF6936AF"
+  },
+  {
+    "Path": "assets/orbital/models/item/godly_icon.json",
+    "Sha256": "A0DC586DF89ED12AA325C1E2B7299EB10F72564056CAF022AFD396F717BD2740"
+  },
+  {
+    "Path": "assets/orbital/models/item/laser_designator.json",
+    "Sha256": "4DADC812206E3E19A4E9E278B34A35866D05686EF0C0904BD076C80EC19FAFAC"
+  },
+  {
+    "Path": "assets/orbital/models/item/meteor_icon.json",
+    "Sha256": "7E25CEB3D4AB67D106AFE78CF2373963FD1EFFACC89DE43E88A748A202174D85"
+  },
+  {
+    "Path": "assets/orbital/models/item/mothership_icon.json",
+    "Sha256": "EB7061E5650DEA679C4520FCF4893FF4B3D5C05751E8B19CAF4A50B470D3E0AF"
+  },
+  {
+    "Path": "assets/orbital/models/item/planetkiller_icon.json",
+    "Sha256": "8C50162EB8872828BD87BDE3C7CE9DFED1CA291ADE6979B1F1ECA22F6710F029"
+  },
+  {
+    "Path": "assets/orbital/models/item/plasma_icon.json",
+    "Sha256": "18760A88E531229A40567A8359659AD51EB46477F540B56B9789C40A94772EA7"
+  },
+  {
+    "Path": "assets/orbital/models/item/remote.json",
+    "Sha256": "563F611BB7FCC572CDF3EFC05503C2AC64FEC06C2131DD2284D93B427D45B51F"
+  },
+  {
+    "Path": "assets/orbital/sounds/beam.ogg",
+    "Sha256": "A486678BD26C945E9C919CE8E05EA38D758C81B9BDA3318E705C9CCE3E8D1BCB"
+  },
+  {
+    "Path": "assets/orbital/sounds/charge.ogg",
+    "Sha256": "727B940932927E5490DCA11E3AE95B7190C49B1A636C05AB46D91B0C8999B150"
+  },
+  {
+    "Path": "assets/orbital/sounds/collapse.ogg",
+    "Sha256": "E611876336441C24A0B77F53CC9355749936EC74FC69091330E831A435CE345F"
+  },
+  {
+    "Path": "assets/orbital/sounds/crackle.ogg",
+    "Sha256": "01D95501E423096B903AC6E8BBC9D6050CFD39228484EDDCA55A9DB3884B6988"
+  },
+  {
+    "Path": "assets/orbital/sounds/fire.ogg",
+    "Sha256": "6EBFB960A574225C4F1BC8B5CD1D1875BE44A3BD6B2E37F14AD0DCC417A6E415"
+  },
+  {
+    "Path": "assets/orbital/sounds/lockon.ogg",
+    "Sha256": "2B62D6B99F9592B5AF0847C5634DE0272B4C2CDCA1C89CD021FBCED7BDFEEE66"
+  },
+  {
+    "Path": "assets/orbital/sounds/rumble.ogg",
+    "Sha256": "8242AD1295E5609515CB4A2A2B31A8AF0FAB2CB46E3867115214155C8A1F3405"
+  },
+  {
+    "Path": "assets/orbital/sounds/shutdown.ogg",
+    "Sha256": "992E31357E061FAADC5AE357A26B11D900F7BEFAB1BF66D529BB490BD7A1992F"
+  },
+  {
+    "Path": "assets/orbital/sounds/blackhole/accent.ogg",
+    "Sha256": "34B3691D62418B2718D6102AA8C989A3DAA9A640D87E5A08DBE09D48E7AAC454"
+  },
+  {
+    "Path": "assets/orbital/sounds/blackhole/beam.ogg",
+    "Sha256": "0965FBA55F5900EBFC2D868CA2A8A8D71DDEC0FD1C7B92D109485A171EDA38EB"
+  },
+  {
+    "Path": "assets/orbital/sounds/blackhole/charge.ogg",
+    "Sha256": "43EBA79A1D5DBD9ED1501C54583499588FC4D4EB16EAF11A51B7EF91C1DEE7A8"
+  },
+  {
+    "Path": "assets/orbital/sounds/blackhole/fire.ogg",
+    "Sha256": "B89D40399CDE5D41445ED5EDDC304002B8EEB3D210E1378DC6D754528A93EF2A"
+  },
+  {
+    "Path": "assets/orbital/sounds/blackhole/lockon.ogg",
+    "Sha256": "AC6F2B6E77164E115CE1D8479A30A569A61BCBD7715E841995BE785C0F0E283B"
+  },
+  {
+    "Path": "assets/orbital/sounds/blackhole/rumble.ogg",
+    "Sha256": "676F8FE1AA393AC3FC72564D0A2E3B350B59743B4FCB9458AFEF5304F91AD00A"
+  },
+  {
+    "Path": "assets/orbital/sounds/blackhole/shutdown.ogg",
+    "Sha256": "819C4252A94584D2E890AFFE539769AEDCB040B7DA73D4B8A0A71DE87DC72CDE"
+  },
+  {
+    "Path": "assets/orbital/sounds/crystalbloom/after.ogg",
+    "Sha256": "79C7ADFD9B64F44B18C5D193BA6E7D75DC0D76180708950866A3F0C79BB5B5AA"
+  },
+  {
+    "Path": "assets/orbital/sounds/crystalbloom/bloom.ogg",
+    "Sha256": "92E875A1FEF6C172905BAF248EA9FF3436C24548EA9342833B6C92F59D50EE3B"
+  },
+  {
+    "Path": "assets/orbital/sounds/crystalbloom/punch1.ogg",
+    "Sha256": "9D925CDFA4BBE988D2AC90AACF8E79E70633AD771AEC344F64A9FB2C26B1EE58"
+  },
+  {
+    "Path": "assets/orbital/sounds/crystalbloom/punch2.ogg",
+    "Sha256": "2EFA54835E66AFC29B41E6CD039E40892BC4A23EAEFAA1373AD97CF882913CF4"
+  },
+  {
+    "Path": "assets/orbital/sounds/crystalbloom/punch3.ogg",
+    "Sha256": "F2B7EE05A60B0FEFC0DA7EFEC2EAB67DC6C6D3806D22ABD69772252CAA3AC64F"
+  },
+  {
+    "Path": "assets/orbital/sounds/crystalbloom/resonance.ogg",
+    "Sha256": "51D7E1046219A92B59F10CCF7706EFDF25C57A9B83EAE5106CD3D35EFB116D11"
+  },
+  {
+    "Path": "assets/orbital/sounds/crystalbloom/shatter.ogg",
+    "Sha256": "17E048DC30EFDEBC7CC7A7C5EC0D7FD43E86883E3D61FDD087E993E01BFFB0B9"
+  },
+  {
+    "Path": "assets/orbital/sounds/crystalbloom/tinkle.ogg",
+    "Sha256": "C2F364246732E840572C6AE81BCA80F94E8912E4FB22BC089175D66631D8FD64"
+  },
+  {
+    "Path": "assets/orbital/sounds/crystalbloom/wake.ogg",
+    "Sha256": "BBB46A5061FC1056CD8A528AA2640F4899B5C1057B4BD6F23995314505C05987"
+  },
+  {
+    "Path": "assets/orbital/sounds/downfall/after.ogg",
+    "Sha256": "28E70F1AAE0384D6356E932CDF0CD47A47FE45625E28B6E7C91132E9737A8BF6"
+  },
+  {
+    "Path": "assets/orbital/sounds/downfall/approach.ogg",
+    "Sha256": "7009988321919CD68F6CB8764813577B6ECB258BE0F4B1661C9ECCCF0DC9C9F9"
+  },
+  {
+    "Path": "assets/orbital/sounds/downfall/battery1.ogg",
+    "Sha256": "8826AAE3CC546C55B11A6809B1DF460B4CB5229D33569C5ADAA93DAA2D8A0C89"
+  },
+  {
+    "Path": "assets/orbital/sounds/downfall/battery2.ogg",
+    "Sha256": "67674D3FF3F3525E272F00C0A5C7D21EEEB8148C2E28349003C5C384F0213CB8"
+  },
+  {
+    "Path": "assets/orbital/sounds/downfall/crash.ogg",
+    "Sha256": "1BD8C2FD095B1EF5EAC9D880C76034261DBA84D2109A59E59644090FBE56104D"
+  },
+  {
+    "Path": "assets/orbital/sounds/downfall/divert.ogg",
+    "Sha256": "EAE3953B0DD9DC1020C904BCA91DAB5429C1BB0278E7C4DCA2CDD02A9C80604F"
+  },
+  {
+    "Path": "assets/orbital/sounds/downfall/evaporate.ogg",
+    "Sha256": "B6C82BB8212BE012FE67DA13AD87C704E87DF4AC288ACE65856E8034D3E0BB08"
+  },
+  {
+    "Path": "assets/orbital/sounds/downfall/fall.ogg",
+    "Sha256": "D8A71D5E8E5442CCEF032A16B72C7104B0999A9F76F7F428EE8BAE247BB7A8C1"
+  },
+  {
+    "Path": "assets/orbital/sounds/downfall/groan1.ogg",
+    "Sha256": "9FEC3085E840E435B08B1DF9D92134D31CF5B06E03B5CD973EE6DE94C2A346C5"
+  },
+  {
+    "Path": "assets/orbital/sounds/downfall/groan2.ogg",
+    "Sha256": "86192D972F7C1A880C24924DCE022223E01D8EB65979D25D40A591746AB0A2F8"
+  },
+  {
+    "Path": "assets/orbital/sounds/downfall/hit1.ogg",
+    "Sha256": "94E7BB47CD986E563F86DE17A71AC28F58D7E3B64E385035A231E7879DCECF0F"
+  },
+  {
+    "Path": "assets/orbital/sounds/downfall/hit2.ogg",
+    "Sha256": "C8507CC7996C5D25071F06FF355B83392D02C482FE0B071AC9952B2114D8283D"
+  },
+  {
+    "Path": "assets/orbital/sounds/downfall/hit3.ogg",
+    "Sha256": "82797427104DC34AF59E1540E9C98DBA0E8AADB1AC4AD60B84E894C7AAE64BA6"
+  },
+  {
+    "Path": "assets/orbital/sounds/downfall/hum.ogg",
+    "Sha256": "0ECFC4CE362772E3C2DF726BEA9AB5B625141F12268B841839688B3C225A3AAE"
+  },
+  {
+    "Path": "assets/orbital/sounds/downfall/rupture.ogg",
+    "Sha256": "BB9FD394E181ADB12702160F723C90FF387545D14198E989977B197851E9696C"
+  },
+  {
+    "Path": "assets/orbital/sounds/downfall/split.ogg",
+    "Sha256": "118BD8E0514E178B472F61CC22CF46F8081A2F4E2894E50B86A710BE614F58F9"
+  },
+  {
+    "Path": "assets/orbital/sounds/downfall/vortex.ogg",
+    "Sha256": "444AF76ABF60BBC49BB547EAE490F823022BBE6AE621C4BD6302FBC0013170A6"
+  },
+  {
+    "Path": "assets/orbital/sounds/godly/accent.ogg",
+    "Sha256": "8E2778DBBCC4F8F27C2C30FE822C53115A92E004A2409E9547092AED24876617"
+  },
+  {
+    "Path": "assets/orbital/sounds/godly/beam.ogg",
+    "Sha256": "2A9ABFE9ADD93143B6801DBF3A1532E45874D24A38ED4F9B53469E3FBC1B6CD7"
+  },
+  {
+    "Path": "assets/orbital/sounds/godly/charge.ogg",
+    "Sha256": "3A701CF839B2687840506402B2139B88942AE6705477196EC67E7DF07560CA02"
+  },
+  {
+    "Path": "assets/orbital/sounds/godly/fire.ogg",
+    "Sha256": "DD1AD4165A17021599CB19695418A394F9038FFE48B2A2258083666B58F50888"
+  },
+  {
+    "Path": "assets/orbital/sounds/godly/lockon.ogg",
+    "Sha256": "340FDD5385743474BDF8A89B842D102D11208FD1D6C997873CBA66ABB87BD8E8"
+  },
+  {
+    "Path": "assets/orbital/sounds/godly/rumble.ogg",
+    "Sha256": "000045C0FC66B331C707E55BD36EE59D76C8DC83F0264B0E2B9F6E339C40403D"
+  },
+  {
+    "Path": "assets/orbital/sounds/godly/shutdown.ogg",
+    "Sha256": "DCAFDC642A7FCE83948F5BFDFF586FBEDE6B72E393428F4F31237CE3DB4E5414"
+  },
+  {
+    "Path": "assets/orbital/sounds/meteor/approach.ogg",
+    "Sha256": "2C6569DF90DDE6B18425CC8B44A99B0F7EB6C82FE5EBB8EEDE2D5FB82107D37C"
+  },
+  {
+    "Path": "assets/orbital/sounds/meteor/charge.ogg",
+    "Sha256": "AC305F427295AC700174999E3759E2E3E2BFD28923253765F48340D2D97E5048"
+  },
+  {
+    "Path": "assets/orbital/sounds/meteor/fire.ogg",
+    "Sha256": "69C56F5E3602FDDC5F9C048C33D1ADBD75211ADB6F3A41327A14760B964EB84A"
+  },
+  {
+    "Path": "assets/orbital/sounds/meteor/hit_far1.ogg",
+    "Sha256": "28B055615DAB4BE34FD7C14C0B2D62405B6594A19A207654DEAA4938387DAECA"
+  },
+  {
+    "Path": "assets/orbital/sounds/meteor/hit_far2.ogg",
+    "Sha256": "F05D0F50704354F56378FD773CEEB1388FAB52504C5CA5D5A3A75472B71FF67D"
+  },
+  {
+    "Path": "assets/orbital/sounds/meteor/hit_far3.ogg",
+    "Sha256": "8438F6E8B93C782F872250903013D792A4BF81F807EFBA352E2E993CED70A92D"
+  },
+  {
+    "Path": "assets/orbital/sounds/meteor/hit1.ogg",
+    "Sha256": "DAF5CF4B0073E48CA9DF4D7B865D50A8B6439CA9EDFDD7550073F03C592CDA83"
+  },
+  {
+    "Path": "assets/orbital/sounds/meteor/hit2.ogg",
+    "Sha256": "DCE7AFAEF35F862C239E97908AC2E01FBB866700F16D0BCD3A731D07DA2BA987"
+  },
+  {
+    "Path": "assets/orbital/sounds/meteor/hit3.ogg",
+    "Sha256": "A85D3A6FA203FAB406D0C51696C2D788B27EC29357973894E4045F5C5E72F232"
+  },
+  {
+    "Path": "assets/orbital/sounds/meteor/impact.ogg",
+    "Sha256": "5B0036C980F162F24ED9A0D8A414C6C491CA73C5C18C0B6D77C52AB9F04A415E"
+  },
+  {
+    "Path": "assets/orbital/sounds/meteor/lockon.ogg",
+    "Sha256": "68518AF96D517F2711E7F989A9B43CDAC132ECB4378861FEC36EB7BD859192A8"
+  },
+  {
+    "Path": "assets/orbital/sounds/meteor/rumble.ogg",
+    "Sha256": "1020A676C25A030D50DBE95FDAE9069AB793DFF26F3435411C1C3FA203CD46C8"
+  },
+  {
+    "Path": "assets/orbital/sounds/meteor/shutdown.ogg",
+    "Sha256": "8C9986ED7A0A27CCA88A3E73913943E34710454E2211BDAEE0FBCE0AED567254"
+  },
+  {
+    "Path": "assets/orbital/sounds/meteor/storm.ogg",
+    "Sha256": "42DA665EE4D5CE01B7F6C1AB5CD3DB0E75C5E5974A9CFB9120534066CF848484"
+  },
+  {
+    "Path": "assets/orbital/sounds/meteor/whoosh1.ogg",
+    "Sha256": "833248679BE10BBE46BF11C65C28F0A15CD1F347F89360014598B4CA25C0A08F"
+  },
+  {
+    "Path": "assets/orbital/sounds/meteor/whoosh2.ogg",
+    "Sha256": "12C57D171A1132D36064816BBD2CB8C0B17E7A25CDED3E20E62F02AEAEAA1C9B"
+  },
+  {
+    "Path": "assets/orbital/sounds/mothership/arrival.ogg",
+    "Sha256": "7EEFB51D84BE3EC47D5385E66569F2183583E970D782A3CFE318446EA464BBB7"
+  },
+  {
+    "Path": "assets/orbital/sounds/mothership/beam1.ogg",
+    "Sha256": "320460119A34A93F5854518AE0CE5DB09AF025234F4B635421300966E5DB52BA"
+  },
+  {
+    "Path": "assets/orbital/sounds/mothership/beam2.ogg",
+    "Sha256": "C7E08A3F5914B88C458F3992FA336DABB86FCFF9EA8851C0D9105B6CC96440C6"
+  },
+  {
+    "Path": "assets/orbital/sounds/mothership/boom.ogg",
+    "Sha256": "0002CAAF3FC3B7B578C3EC626CA513625AD5C764E6BC2DC4398494EBE0493ABD"
+  },
+  {
+    "Path": "assets/orbital/sounds/mothership/charge.ogg",
+    "Sha256": "C591637A9E57ED0F8166B164E837977F314264BE70931515DEE24DF2176A190E"
+  },
+  {
+    "Path": "assets/orbital/sounds/mothership/cutoff.ogg",
+    "Sha256": "E8B6711F6A6FA53FC60861271F5275B95168D9469952155D9484B3BA3000E313"
+  },
+  {
+    "Path": "assets/orbital/sounds/mothership/depart.ogg",
+    "Sha256": "620531AEF4840FD34FCD232A20A8F70E8EAF801141FB462E08F786EA2BC88D3F"
+  },
+  {
+    "Path": "assets/orbital/sounds/mothership/fire.ogg",
+    "Sha256": "6084764D2331CB8584BD6EE636DE6422FA8841440B33E8E3A69727A0693DA5FE"
+  },
+  {
+    "Path": "assets/orbital/sounds/mothership/hum.ogg",
+    "Sha256": "5A14FADE62ABBB7F5B92F86584CBEDF4B08CC6602F661C9B96BC07BEF30043AD"
+  },
+  {
+    "Path": "assets/orbital/sounds/mothership/rumble.ogg",
+    "Sha256": "EFE56A093513078FB44CBF25F1A1442F1295F6C180C56BAF4F2EBE3FD29F90FF"
+  },
+  {
+    "Path": "assets/orbital/sounds/mothership/sweep1.ogg",
+    "Sha256": "D25E293FEDB174B306DC53922839A1A29B0734B5302C3B93C2922E26B410D94B"
+  },
+  {
+    "Path": "assets/orbital/sounds/mothership/sweep2.ogg",
+    "Sha256": "C942429CFBAFC5AB8E60E5900982AF9069036D575D99A92033C3B37002DD17DC"
+  },
+  {
+    "Path": "assets/orbital/sounds/planetkiller/after.ogg",
+    "Sha256": "A921436174281C0C9B1AED9E8DC0AE601B46808B4392D34B14D563627C48CC02"
+  },
+  {
+    "Path": "assets/orbital/sounds/planetkiller/arcs.ogg",
+    "Sha256": "B97F087ED496146009CC225FCD52CDAC29CC961CE2985302F1FE474FC5E806CC"
+  },
+  {
+    "Path": "assets/orbital/sounds/planetkiller/beam1.ogg",
+    "Sha256": "449B3CD110C9EE79CBDA9AEF4192941CBB36E47AA876B5862A643F44F3AF57EC"
+  },
+  {
+    "Path": "assets/orbital/sounds/planetkiller/beam2.ogg",
+    "Sha256": "C6BC9BBC22857E305D4CAB4867707435174C51E2BB7110E0E25C61EB773A775C"
+  },
+  {
+    "Path": "assets/orbital/sounds/planetkiller/bolt1.ogg",
+    "Sha256": "EE31F136007C7535098E8ED7301D88CAC262C97C553D8444A0F1BEA06A0E2BC6"
+  },
+  {
+    "Path": "assets/orbital/sounds/planetkiller/bolt2.ogg",
+    "Sha256": "67A5E279977E9BAE53655D8520899F7D982E57C4F79A836A17F1B027CB4597E1"
+  },
+  {
+    "Path": "assets/orbital/sounds/planetkiller/bolt3.ogg",
+    "Sha256": "BE2D022CE8E07CDF09826EF73EB2D5DBBB458146160A2E6F74F38E5744E73F64"
+  },
+  {
+    "Path": "assets/orbital/sounds/planetkiller/charge.ogg",
+    "Sha256": "2AC6A93A62719FEC9409F212A863A9CD17CEDA319DC7F6A96D2C05A8609F1AA1"
+  },
+  {
+    "Path": "assets/orbital/sounds/planetkiller/cutoff.ogg",
+    "Sha256": "98E50DCEDC5808F6E5704BDEE1D069183164D9550D2747EAFD33A2122758B27D"
+  },
+  {
+    "Path": "assets/orbital/sounds/planetkiller/fire.ogg",
+    "Sha256": "E35A9E517CD3F42ED79C3737909A998D79506DD3BF3B421BE552E71C360F10BF"
+  },
+  {
+    "Path": "assets/orbital/sounds/planetkiller/merge.ogg",
+    "Sha256": "9BBB9623917BD8EFFF77536C9A80B60CAA5069BAB61E663C1971A321B9FAC88F"
+  },
+  {
+    "Path": "assets/orbital/sounds/planetkiller/rise1.ogg",
+    "Sha256": "68527950DE03CF0B8478D4DD39AB9271010834F6BBEF51CEBE65B1684B34846E"
+  },
+  {
+    "Path": "assets/orbital/sounds/planetkiller/rise2.ogg",
+    "Sha256": "1F18FF85F2547642467FA6C79F6690047C54FC9F0BB8B843931AD7B4B116386C"
+  },
+  {
+    "Path": "assets/orbital/sounds/planetkiller/rise3.ogg",
+    "Sha256": "A0B8729FAF87F0575750852F9C92B44E58D2B74FAB50529374F8B69526EE7DA4"
+  },
+  {
+    "Path": "assets/orbital/sounds/planetkiller/rumble.ogg",
+    "Sha256": "113D7E1AA9EEDF490EEC45E28067A3E84EF3AD8CCC67BBA271ABFA7B93057197"
+  },
+  {
+    "Path": "assets/orbital/textures/item/blackhole_icon.png",
+    "Sha256": "EDE9FBFB87B463836B193FB3E0AC11ED1ABEDDE4DCC859217EF423A71564B0B0"
+  },
+  {
+    "Path": "assets/orbital/textures/item/crystalbloom_icon.png",
+    "Sha256": "92C05AE9FA114E18BDF5F33111B4D3418316DE52DF95AC577C328B4E3950406F"
+  },
+  {
+    "Path": "assets/orbital/textures/item/downfall_icon.png",
+    "Sha256": "9B3A81A839539095BA9B5E11504E037B0448AFB19A6564142ACD4015F1E41950"
+  },
+  {
+    "Path": "assets/orbital/textures/item/godly_icon.png",
+    "Sha256": "309AB189F9DFBCF2AD422C6C05B2C888214B22B0BCB29987CF1F5D601826A692"
+  },
+  {
+    "Path": "assets/orbital/textures/item/laser_designator.png",
+    "Sha256": "87303682529F678F24067B3CF5CDA71EBCC9AAF62F9883E12602E752C91921DD"
+  },
+  {
+    "Path": "assets/orbital/textures/item/meteor_icon.png",
+    "Sha256": "5A162EC354A966E8AD3226C1E52AADAFADF7EE0DC61A44FB9F15EE3FACCE204A"
+  },
+  {
+    "Path": "assets/orbital/textures/item/mothership_icon.png",
+    "Sha256": "4D21591BEBFAD42417D1F9D2004516AB3149C769026ECFB437AAE4C9C1AD7BC7"
+  },
+  {
+    "Path": "assets/orbital/textures/item/planetkiller_icon.png",
+    "Sha256": "D90E7955C4D3ED2B8946AB1A8C9CFA1D9D978E3942BE98806426243947E1DB4C"
+  },
+  {
+    "Path": "assets/orbital/textures/item/plasma_icon.png",
+    "Sha256": "01C206EA9F7F71A4679FE958C6A6AE425428150E491C6001A5D00F1D6ADE5CC2"
+  },
+  {
+    "Path": "assets/orbital/textures/item/remote.png",
+    "Sha256": "83AA8783AED6CC95F7CC7E0D7E77444DE00201B24CD73B89080C4C6C3CFEBA8D"
+  },
+  {
+    "Path": "data/orbital/horizon/item/laser_designator.json",
+    "Sha256": "1BA9416B9B31D65B50FFD7156766061BA95100FC79E9F9033AB7BF526FAD2303"
+  },
+  {
+    "Path": "data/orbital/horizon/item/remote.json",
+    "Sha256": "48AC645E5AC3275F6C85491B46753984E376B7C5E1F6E28E1296436CEA17C91A"
+  }
+]
