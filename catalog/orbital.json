@@ -1,8 +1,18 @@
 {
   "schema": 1,
   "id": "orbital",
-  "status": "integration",
+  "name": "Orbital Laser",
   "version": "0.5.3",
-  "catalogEnabled": false,
-  "multiplayerReady": false
+  "platform": "windows-x64",
+  "releaseTag": "orbital-0.5.3-luma.1",
+  "url": "https://github.com/ltwan2256/luma-launcher/releases/download/orbital-0.5.3-luma.1/luma-orbital-0.5.3-windows-luma.1.zip",
+  "sha256": "cbdfb3bfe2970eab6cdb4454996ec06bbf08bb1bd43ca4a79693c0e08e8d3c61",
+  "bytes": 37178838,
+  "published": true,
+  "multiplayerReady": true,
+  "catalogEnabled": true,
+  "clientRevision": "cbceb3f0e8dbd2eba25d3ba0c826338c93e35226",
+  "clientSha256": "31274262c5851ed9032099a3951f178cfa7f293df7c5cac42a5f1dd34e6ed5e5",
+  "inventorySha256": "6c3e4df2c8485dca2bcb2db69969f340a3c498d215b281585af833ed34e32e36",
+  "state": "ready"
 }
